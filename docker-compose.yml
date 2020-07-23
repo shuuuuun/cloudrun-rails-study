@@ -7,10 +7,9 @@ services:
     #   - .env
     environment:
       RACK_ENV: development
-      # DATABASE_HOST: db
-      # DATABASE_NAME: app
-      # DATABASE_USERNAME: root
-      # DATABASE_PASSWORD: root
+      DATABASE_HOST: db
+      DATABASE_USERNAME: root
+      DATABASE_PASSWORD: password
     volumes:
       - .:/app:cached
       # - ${BASH_HISTORY_PATH:-~/.bash_history}:/root/.bash_history
@@ -33,7 +32,7 @@ services:
   db:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: password
     volumes:
       - db_data:/var/lib/mysql
 
