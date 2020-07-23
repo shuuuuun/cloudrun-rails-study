@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    # env_file:
+    #   - .env
+    environment:
+      RACK_ENV: development
+      # DATABASE_HOST: db
+      # DATABASE_NAME: app
+      # DATABASE_USERNAME: root
+      # DATABASE_PASSWORD: root
+    volumes:
+      - .:/app:cached
+      # - ${BASH_HISTORY_PATH:-~/.bash_history}:/root/.bash_history
+      - bundle:/usr/local/bundle
+      - rails_cache:/app/tmp/cache
+      # - node_modules:/app/node_modules
+      # - packs:/app/public/packs
+      # exclude volumes below
+      - /app/.git
+      - /app/vendor
+      - /app/tmp
+      - /app/log
+    depends_on:
+      - db
+    ports:
+      - ${PORT:-3000}:3000
+    tty: true
+    stdin_open: true
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  bundle:
+  rails_cache:
+  node_modules:
+  # packs:
+  db_data:
