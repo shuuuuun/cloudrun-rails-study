@@ -66,8 +66,6 @@ GEM
       activesupport (>= 4.2.0)
     i18n (1.8.4)
       concurrent-ruby (~> 1.0)
-    jbuilder (2.10.0)
-      activesupport (>= 5.0.0)
     loofah (2.6.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -142,7 +140,6 @@ PLATFORMS
 
 DEPENDENCIES
   byebug
-  jbuilder (~> 2.7)
   mysql2 (>= 0.4.4)
   puma (~> 4.1)
   rails (~> 6.0.3, >= 6.0.3.2)
