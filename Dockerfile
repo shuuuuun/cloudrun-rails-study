@@ -8,9 +8,8 @@ ENV PORT 3000
 ENV RACK_ENV production
 ENV RAILS_LOG_TO_STDOUT 1
 
-RUN set -ex
-
-RUN apk update \
+RUN set -ex \
+    && apk update \
     && apk add --no-cache \
         alpine-sdk \
         mariadb-dev \
