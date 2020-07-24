@@ -1,6 +1,22 @@
 steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: [ 'build', '--tag', 'gcr.io/$PROJECT_ID/cloudrun-rails-study', '--build-arg', 'RAILS_MASTER_KEY=${_RAILS_MASTER_KEY}', '.' ]
+  - name: 'gcr.io/$PROJECT_ID/cloudrun-rails-study'
+    args: [ 'bin/rails', 'db:setup' ]
+    # args: [ './cloud_sql_proxy', '-instances=INSTANCE_CONNECTION_NAME=tcp:3306', '&', 'bin/rails', 'db:setup' ]
+    env:
+      - 'RAILS_MASTER_KEY=${_RAILS_MASTER_KEY}'
+      - 'DATABASE_USERNAME=root'
+      - 'DATABASE_PASSWORD=password'
+      - 'DATABASE_HOST=127.0.0.1'
+  - name: 'gcr.io/$PROJECT_ID/cloudrun-rails-study'
+    args: [ 'bin/rails', 'db:setup' ]
+    # args: [ './cloud_sql_proxy', '-instances=INSTANCE_CONNECTION_NAME=tcp:3306', '&', 'bin/rails', 'db:setup' ]
+    env:
+      - 'RAILS_MASTER_KEY=${_RAILS_MASTER_KEY}'
+      - 'DATABASE_USERNAME=root'
+      - 'DATABASE_PASSWORD=password'
+      - 'DATABASE_HOST=127.0.0.1'
 
 # image is pushed to Container Registry
 images:
