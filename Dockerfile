@@ -6,7 +6,11 @@ ENV EDITOR vi
 
 ENV PORT 3000
 ENV RACK_ENV production
+ENV RAILS_ENV production
 ENV RAILS_LOG_TO_STDOUT 1
+
+ARG RAILS_MASTER_KEY
+ENV RAILS_MASTER_KEY ${RAILS_MASTER_KEY}
 
 RUN set -ex \
     && apk update \
@@ -20,12 +24,6 @@ RUN set -ex \
     && bundle config set without 'test development'
 
 WORKDIR /app
-
-# ARG RAILS_ENV
-# ARG SECRET_KEY_BASE
-
-# ENV RAILS_ENV=$RAILS_ENV
-# ENV SECRET_KEY_BASE=$SECRET_KEY_BASE
 
 COPY Gemfile* /app/
 RUN bundle install --jobs=2
@@ -46,6 +44,4 @@ RUN set -ex \
 COPY . /app
 
 EXPOSE ${PORT}
-ENV PID_FILE /tmp/server.pid
-CMD ["sh", "-c", "rm -f ${PID_FILE} && bundle exec rails server -p ${PORT} -b 0.0.0.0 --pid ${PID_FILE}"]
-# CMD ["bundle", "exec", "puma", "-C", "pumaconf.rb"]
+CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
