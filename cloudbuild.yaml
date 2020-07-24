@@ -1,0 +1,7 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'build', '--tag', 'gcr.io/$PROJECT_ID/cloudrun-rails-study', '--build-arg', 'RAILS_MASTER_KEY=${_RAILS_MASTER_KEY}', '.' ]
+
+# image is pushed to Container Registry
+images:
+  - 'gcr.io/$PROJECT_ID/cloudrun-rails-study'
