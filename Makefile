@@ -3,6 +3,7 @@ IMAGE_NAME := cloudrun-rails-study
 SERVICE_NAME := cloudrun-rails-study
 CLOUD_SQL_INSTANCE_NAME := cloudrun-rails-study
 SERVICE_ACCOUNT_EMAIL := cloud-run@cloudrun-rails-study.iam.gserviceaccount.com
+RAILS_MASTER_KEY := $(shell cat config/master.key)
 
 .PHONY: gcloud-setup
 gcloud-setup:
@@ -33,7 +34,7 @@ gcloud-iam-setup:
 .PHONY: gcloud-run-setenv
 gcloud-run-setenv:
 	gcloud run services update ${SERVICE_NAME} \
-		--update-env-vars RAILS_MASTER_KEY=$$(cat config/master.key) \
+		--update-env-vars RAILS_MASTER_KEY=${RAILS_MASTER_KEY} \
 		--update-env-vars DATABASE_USERNAME=root \
 		--update-env-vars DATABASE_PASSWORD=password \
 		--update-env-vars DATABASE_HOST=/cloudsql/${PROJECT_NAME}:asia-northeast1:${CLOUD_SQL_INSTANCE_NAME}
@@ -44,7 +45,7 @@ gcloud-run-setenv:
 .PHONY: gcloud-builds-submit
 gcloud-builds-submit:
 	# gcloud builds submit --tag gcr.io/${PROJECT_NAME}/${IMAGE_NAME}
-	gcloud builds submit --substitutions=_RAILS_MASTER_KEY=$$(cat config/master.key)
+	gcloud builds submit --substitutions=_RAILS_MASTER_KEY=${RAILS_MASTER_KEY}
 
 .PHONY: gcloud-run-deploy
 gcloud-run-deploy:
@@ -58,8 +59,8 @@ gcloud-build-and-deploy:
 
 .PHONY: docker-build-as-prod
 docker-build-as-prod:
-	docker image build --build-arg RAILS_MASTER_KEY=$$(cat config/master.key) --tag cloudrun-rails-study_prod .
+	docker image build --build-arg RAILS_MASTER_KEY=${RAILS_MASTER_KEY} --tag cloudrun-rails-study_prod .
 
 .PHONY: docker-run-as-prod
 docker-run-as-prod:
-	docker container run --rm --env RAILS_MASTER_KEY=$$(cat config/master.key) cloudrun-rails-study_prod
+	docker container run --rm --env RAILS_MASTER_KEY=${RAILS_MASTER_KEY} cloudrun-rails-study_prod
