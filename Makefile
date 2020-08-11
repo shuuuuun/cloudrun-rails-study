@@ -52,6 +52,10 @@ gcloud-db-setup:
 		--password=$${DB_APP_PASSWORD}
 	# gcloud --project=${PROJECT_NAME} sql databases create app_production --instance ${CLOUD_SQL_INSTANCE_NAME}
 
+# .PHONY: gcloud-db-destroy
+# gcloud-db-destroy:
+# 	gcloud sql instances delete ${CLOUD_SQL_INSTANCE_NAME} --project=${PROJECT_NAME}
+
 .PHONY: gcloud-run-setenv
 gcloud-run-setenv:
 	gcloud run services update ${SERVICE_NAME} \
