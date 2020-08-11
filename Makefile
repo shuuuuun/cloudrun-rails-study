@@ -100,4 +100,4 @@ rails-setup:
 .PHONY: db-console-prod
 db-console-prod:
 	docker-compose up -d cloud_sql_proxy
-	docker-compose run --rm app mysql -uroot -h cloud_sql_proxy -p
+	mysql -uroot -h0.0.0.0 -P${CLOUD_SQL_PROXY_PORT:-3306} -p

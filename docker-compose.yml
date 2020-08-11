@@ -52,7 +52,7 @@ services:
     volumes:
       - "./keys/cloud-sql-proxy.json:/config/cloud-sql-proxy.json"
     ports:
-      - "3306:3306"
+      - ${CLOUD_SQL_PROXY_PORT:-3306}:3306
 
 volumes:
   bundle:
