@@ -1,12 +1,15 @@
+### without Kaniko
+# steps:
+#   - name: 'gcr.io/cloud-builders/docker'
+#     args: [ 'build', '--tag', 'gcr.io/${PROJECT_ID}/cloudrun-rails-study', '--build-arg', 'RAILS_MASTER_KEY=${_RAILS_MASTER_KEY}', '.' ]
+#
+# images:
+#   - 'gcr.io/${PROJECT_ID}/cloudrun-rails-study'
+
+### using Kaniko
 steps:
-  # - name: 'gcr.io/cloud-builders/docker'
-  #   args: [ 'build', '--tag', 'gcr.io/${PROJECT_ID}/cloudrun-rails-study', '--build-arg', 'RAILS_MASTER_KEY=${_RAILS_MASTER_KEY}', '.' ]
   - name: 'gcr.io/kaniko-project/executor:latest'
     args:
       - --build-arg=RAILS_MASTER_KEY=${_RAILS_MASTER_KEY}
       - --destination=gcr.io/${PROJECT_ID}/cloudrun-rails-study:latest
       - --cache=true
-
-# image is pushed to Container Registry
-# images:
-#   - 'gcr.io/${PROJECT_ID}/cloudrun-rails-study'
