@@ -40,14 +40,24 @@ gcloud-iam-setup:
 # 初回の一度だけ利用
 .PHONY: gcloud-db-setup
 gcloud-db-setup:
-	gcloud --project=${PROJECT_NAME} sql databases create app_production --instance cloudrun-rails-study
+	gcloud sql instances create ${CLOUD_SQL_INSTANCE_NAME} \
+		--project=${PROJECT_NAME} \
+		--region asia-northeast1 \
+		--assign-ip \
+		--tier db-f1-micro \
+		--root-password=$${DB_ROOT_PASSWORD}
+	gcloud sql users create app \
+		--project=${PROJECT_NAME} \
+		--instance=${CLOUD_SQL_INSTANCE_NAME} \
+		--password=$${DB_APP_PASSWORD}
+	# gcloud --project=${PROJECT_NAME} sql databases create app_production --instance ${CLOUD_SQL_INSTANCE_NAME}
 
 .PHONY: gcloud-run-setenv
 gcloud-run-setenv:
 	gcloud run services update ${SERVICE_NAME} \
 		--project=${PROJECT_NAME} \
 		--update-env-vars RAILS_MASTER_KEY=${RAILS_MASTER_KEY} \
-		--update-env-vars DATABASE_USERNAME=root \
+		--update-env-vars DATABASE_USERNAME=app \
 		--update-env-vars DATABASE_PASSWORD=password \
 		--update-env-vars DATABASE_SOCKET=/cloudsql/${PROJECT_NAME}:asia-northeast1:${CLOUD_SQL_INSTANCE_NAME}
 		# --update-env-vars DATABASE_HOST=127.0.0.1
@@ -86,3 +96,8 @@ docker-run-as-prod:
 .PHONY: rails-setup
 rails-setup:
 	docker-compose run --rm app sh -c 'rails db:setup && rails db:seed'
+
+.PHONY: db-console-prod
+db-console-prod:
+	docker-compose up -d cloud_sql_proxy
+	docker-compose run --rm app mysql -uroot -h cloud_sql_proxy -p
