@@ -49,8 +49,8 @@ gcloud-run-setenv:
 		--update-env-vars RAILS_MASTER_KEY=${RAILS_MASTER_KEY} \
 		--update-env-vars DATABASE_USERNAME=root \
 		--update-env-vars DATABASE_PASSWORD=password \
-		--update-env-vars DATABASE_HOST=127.0.0.1
-		# --update-env-vars DATABASE_HOST=/cloudsql/${PROJECT_NAME}:asia-northeast1:${CLOUD_SQL_INSTANCE_NAME}
+		--update-env-vars DATABASE_SOCKET=/cloudsql/${PROJECT_NAME}:asia-northeast1:${CLOUD_SQL_INSTANCE_NAME}
+		# --update-env-vars DATABASE_HOST=127.0.0.1
 	# arr=($$(cat .env)); \
 	# str="$$(IFS=,; echo "$${arr[*]}")"; \
 	# gcloud run services update ${SERVICE_NAME} --update-env-vars RACK_ENV=production,$${str}
