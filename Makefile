@@ -45,6 +45,7 @@ gcloud-db-setup:
 .PHONY: gcloud-run-setenv
 gcloud-run-setenv:
 	gcloud run services update ${SERVICE_NAME} \
+		--project=${PROJECT_NAME} \
 		--update-env-vars RAILS_MASTER_KEY=${RAILS_MASTER_KEY} \
 		--update-env-vars DATABASE_USERNAME=root \
 		--update-env-vars DATABASE_PASSWORD=password \
@@ -57,11 +58,12 @@ gcloud-run-setenv:
 .PHONY: gcloud-builds-submit
 gcloud-builds-submit:
 	# gcloud builds submit --tag gcr.io/${PROJECT_NAME}/${IMAGE_NAME}
-	gcloud builds submit --substitutions=_RAILS_MASTER_KEY=${RAILS_MASTER_KEY}
+	gcloud builds submit --project=${PROJECT_NAME} --substitutions=_RAILS_MASTER_KEY=${RAILS_MASTER_KEY}
 
 .PHONY: gcloud-run-deploy
 gcloud-run-deploy:
 	gcloud run deploy ${SERVICE_NAME} \
+		--project=${PROJECT_NAME} \
 		--image gcr.io/${PROJECT_NAME}/${IMAGE_NAME} \
 		--service-account ${SERVICE_ACCOUNT_EMAIL} \
 		--platform managed \
