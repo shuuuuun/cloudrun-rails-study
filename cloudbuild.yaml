@@ -24,5 +24,5 @@ steps:
   #     - 'DATABASE_HOST=127.0.0.1'
 
 # image is pushed to Container Registry
-images:
-  - 'gcr.io/${PROJECT_ID}/cloudrun-rails-study'
+# images:
+#   - 'gcr.io/${PROJECT_ID}/cloudrun-rails-study'
