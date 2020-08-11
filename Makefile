@@ -30,6 +30,17 @@ gcloud-iam-setup:
 	gcloud projects add-iam-policy-binding ${PROJECT_NAME} --member serviceAccount:${SERVICE_ACCOUNT_EMAIL} --role roles/editor
 	gcloud projects add-iam-policy-binding ${PROJECT_NAME} --member=serviceAccount:${SERVICE_ACCOUNT_EMAIL} --role=roles/run.invoker
 	gcloud projects add-iam-policy-binding ${PROJECT_NAME} --member=serviceAccount:${SERVICE_ACCOUNT_EMAIL} --role=roles/errorreporting.writer
+	# Cloud SQL Proxy用のサービスアカウントを作成
+	gcloud --project=${PROJECT_NAME} iam service-accounts create cloud-sql-proxy --display-name "Cloud SQL Proxy Service Account"
+	gcloud --project=${PROJECT_NAME} iam service-accounts keys create ./keys/cloud-sql-proxy.json --iam-account=cloud-sql-proxy@cloudrun-rails-study.iam.gserviceaccount.com
+	gcloud projects add-iam-policy-binding ${PROJECT_NAME} --member=serviceAccount:cloud-sql-proxy@cloudrun-rails-study.iam.gserviceaccount.com --role=roles/cloudsql.client
+	gcloud projects add-iam-policy-binding ${PROJECT_NAME} --member=serviceAccount:cloud-sql-proxy@cloudrun-rails-study.iam.gserviceaccount.com --role=roles/cloudsql.admin
+	gcloud projects add-iam-policy-binding ${PROJECT_NAME} --member=serviceAccount:cloud-sql-proxy@cloudrun-rails-study.iam.gserviceaccount.com --role=roles/cloudsql.editor
+
+# 初回の一度だけ利用
+.PHONY: gcloud-db-setup
+gcloud-db-setup:
+	gcloud --project=${PROJECT_NAME} sql databases create app_production --instance cloudrun-rails-study
 
 .PHONY: gcloud-run-setenv
 gcloud-run-setenv:
@@ -37,7 +48,8 @@ gcloud-run-setenv:
 		--update-env-vars RAILS_MASTER_KEY=${RAILS_MASTER_KEY} \
 		--update-env-vars DATABASE_USERNAME=root \
 		--update-env-vars DATABASE_PASSWORD=password \
-		--update-env-vars DATABASE_HOST=/cloudsql/${PROJECT_NAME}:asia-northeast1:${CLOUD_SQL_INSTANCE_NAME}
+		--update-env-vars DATABASE_HOST=127.0.0.1
+		# --update-env-vars DATABASE_HOST=/cloudsql/${PROJECT_NAME}:asia-northeast1:${CLOUD_SQL_INSTANCE_NAME}
 	# arr=($$(cat .env)); \
 	# str="$$(IFS=,; echo "$${arr[*]}")"; \
 	# gcloud run services update ${SERVICE_NAME} --update-env-vars RACK_ENV=production,$${str}
@@ -49,7 +61,11 @@ gcloud-builds-submit:
 
 .PHONY: gcloud-run-deploy
 gcloud-run-deploy:
-	gcloud run deploy ${SERVICE_NAME} --image gcr.io/${PROJECT_NAME}/${IMAGE_NAME} --service-account ${SERVICE_ACCOUNT_EMAIL} --platform managed --region asia-northeast1 \
+	gcloud run deploy ${SERVICE_NAME} \
+		--image gcr.io/${PROJECT_NAME}/${IMAGE_NAME} \
+		--service-account ${SERVICE_ACCOUNT_EMAIL} \
+		--platform managed \
+		--region asia-northeast1 \
 		--add-cloudsql-instances ${PROJECT_NAME}:asia-northeast1:${CLOUD_SQL_INSTANCE_NAME}
 
 .PHONY: gcloud-build-and-deploy
@@ -64,3 +80,7 @@ docker-build-as-prod:
 .PHONY: docker-run-as-prod
 docker-run-as-prod:
 	docker container run --rm --env RAILS_MASTER_KEY=${RAILS_MASTER_KEY} cloudrun-rails-study_prod
+
+.PHONY: rails-setup
+rails-setup:
+	docker-compose run --rm app sh -c 'rails db:setup && rails db:seed'
