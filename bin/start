@@ -9,5 +9,6 @@ PORT=${PORT:=3000}
 # db migrate
 ${ROOT_PATH}/bin/rails db:create
 ${ROOT_PATH}/bin/rails db:migrate
+${ROOT_PATH}/bin/rails db:seed
 
 bundle exec puma -C ${ROOT_PATH}/config/puma.rb
