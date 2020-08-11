@@ -1,0 +1,11 @@
+#!/bin/sh
+
+ROOT_PATH=`cd "$(dirname $0)/../" && pwd`
+
+PORT=${PORT:=3000}
+
+# db migrate
+${ROOT_PATH}/bin/rails db:create
+${ROOT_PATH}/bin/rails db:migrate
+
+bundle exec puma -C ${ROOT_PATH}/config/puma.rb

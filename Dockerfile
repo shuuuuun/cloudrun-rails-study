@@ -44,4 +44,5 @@ RUN set -ex \
 COPY . /app
 
 EXPOSE ${PORT}
-CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
+# CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
+CMD ["/app/bin/start"]
