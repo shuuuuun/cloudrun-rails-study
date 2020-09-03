@@ -71,7 +71,10 @@ gcloud-run-setenv:
 
 .PHONY: gcloud-builds-submit
 gcloud-builds-submit:
-	# gcloud builds submit --tag gcr.io/${PROJECT_NAME}/${IMAGE_NAME}
+	gcloud builds submit --project=${PROJECT_NAME} --tag gcr.io/${PROJECT_NAME}/${IMAGE_NAME}
+
+.PHONY: gcloud-builds-submit-with-cloudbuild
+gcloud-builds-submit-with-cloudbuild:
 	gcloud builds submit --project=${PROJECT_NAME} --substitutions=_RAILS_MASTER_KEY=${RAILS_MASTER_KEY}
 
 .PHONY: gcloud-run-deploy
